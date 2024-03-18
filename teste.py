@@ -339,6 +339,7 @@ class TestWindow(QMainWindow):
         
         # Build the data file
         self.create_csv()
+        app.quit()
     
     def on_timeout(self):
         """ This function will recieve a signal after answer_timer reach timeout
