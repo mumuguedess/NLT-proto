@@ -13,7 +13,7 @@ class number_letter_task(QThread):
     block_A_size = 10
     block_B_size = 10
     block_C_size = 10
-    random_quadrants = True
+    random_quadrants = False
 
     def __init__(self):
             '''
