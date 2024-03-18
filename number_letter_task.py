@@ -10,9 +10,9 @@ class number_letter_task(QThread):
     data = pyqtSignal(list, list)
 
     # Number of trials
-    block_A_size = 10
-    block_B_size = 10
-    block_C_size = 10
+    block_A_size = 40
+    block_B_size = 40
+    block_C_size = 40
     random_quadrants = False
 
     def __init__(self):
