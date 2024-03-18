@@ -23,7 +23,7 @@ class number_letter_task(QThread):
         '''
         Function that are started when this WorkerThread are started
 
-        This function calculate all the right answeres from the number_letter_task
+        This function calculate all the right answeres for the number_letter_task
         '''
         # Run the events
         loop = asyncio.new_event_loop()
