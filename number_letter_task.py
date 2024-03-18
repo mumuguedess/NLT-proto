@@ -1,9 +1,6 @@
-import sys
 import random
 import asyncio
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QThread, pyqtSignal, QObject, Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QComboBox, QPushButton, QLabel, QCheckBox, QDesktopWidget, QDialog, QMessageBox, QStatusBar, QLineEdit, QSpacerItem, QSizePolicy
+from PyQt5.QtCore import QThread, pyqtSignal
 
 class number_letter_task(QThread):
     # It sends information to build the nl test
