@@ -1,5 +1,6 @@
 import sys
 import time
+import datetime
 import csv
 from number_letter_task import number_letter_task
 from PyQt5.QtGui import QFont, QColor, QPalette, QKeySequence
@@ -38,7 +39,7 @@ class TestWindow(QMainWindow):
         self.setWindowTitle('Numer Letter Task')
 
         # Config the window size
-        self.setGeometry(0, 0, 1200, 800)
+        self.showFullScreen()
 
         # Vertical layout
         self.layout = QVBoxLayout()
@@ -48,11 +49,17 @@ class TestWindow(QMainWindow):
         self.central_widget.setLayout(self.layout)
         self.setCentralWidget(self.central_widget)
 
-        # Config the center point of the screen and move the main window to it
-        qtRectangle = self.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        qtRectangle.moveCenter(centerPoint)
-        self.move(qtRectangle.topLeft())
+        # Define background color
+        color = QColor(50 ,50, 50) # Blue
+        pallete = QPalette()
+        pallete.setColor(QPalette.Background, color)
+        self.central_widget.setAutoFillBackground(True)
+        self.central_widget.setPalette(pallete)
+
+        # Config the center point of the screen
+        self.center_point = QDesktopWidget().availableGeometry().center()
+        self.screen_width = QDesktopWidget().availableGeometry().width()
+        self.screen_height = QDesktopWidget().availableGeometry().height()
 
         
                                         ###### Explanation Screen Configuration ######
@@ -61,54 +68,131 @@ class TestWindow(QMainWindow):
         next_pageF = QFont("Arial", 16)
         self.trialF = QFont("Arial", 40)
         descriptionF = QFont("Arial", 13)
-        descriptionF.weight()
         descriptionF.setWeight(QFont.Bold)
         
 
         # Explanation labels about the experiment
-        explanation_part1 = QLabel('Esse teste vai funcionar da seuginte maneira: \n\nA tela será dividida em 4 partes. Então, uma combinação de 1 letra e 1 número irá aparecer em uma dessas partes')
-        explanation_part1.setAlignment(Qt.AlignHCenter)
+        explanation_part1 = QLabel('Esse teste vai funcionar da seuguinte maneira: \n\nA tela será dividida em 4 partes. Então, uma combinação de 1 letra e 1 número irá aparecer em uma dessas partes', self.central_widget)
+        explanation_part1.setGeometry(0, 0, self.screen_width, self.screen_height)
+        explanation_part1.setAlignment(Qt.AlignCenter)
         explanation_part1.setFont(labelF)
+        explanation_part1.setStyleSheet("color: white;")
         explanation_part1.setWordWrap(True)
 
-        explanation_part2 = QLabel('A intenção é que você preste atenção se a letra é uma vogal ou uma consoante e se o número é par ou ímpar')
-        explanation_part2.setAlignment(Qt.AlignHCenter)
+        explanation_part2 = QLabel('A cada rodada do teste você terá 4 segundos para indicar a característica da letra OU do número dependendo de onde a combinação de letra e número aparecer', self.central_widget)
+        explanation_part2.setGeometry(0, 0, self.screen_width, self.screen_height)
+        explanation_part2.setAlignment(Qt.AlignCenter)
+        explanation_part2.setHidden(True)
         explanation_part2.setFont(labelF)
         explanation_part2.setWordWrap(True)
+        explanation_part2.setStyleSheet("color: white;")
 
-        explanation_part3 = QLabel('A cada rodada do teste você terá 4 segundos para indicar a característica da letra OU do número dependendo de onde a combinação de letra e número aparecer')
-        explanation_part3.setAlignment(Qt.AlignHCenter)
+        explanation_part3 = QLabel('A resposta vai ser recebida pelas teclas "B" e "N" do teclado. "B" indica par ou vogal, "N" indica ímpar ou consoante', self.central_widget)
+        explanation_part3.setGeometry(0, 0, self.screen_width, self.screen_height)
+        explanation_part3.setAlignment(Qt.AlignCenter)
+        explanation_part3.setHidden(True)
         explanation_part3.setFont(labelF)
         explanation_part3.setWordWrap(True)
+        explanation_part3.setStyleSheet("color: white;")
 
-        next_page_explanation = QLabel('Aperte ESPAÇO para a próxima página')
+        explanation_part4 = QLabel('Quando o conjunto aparecer na parte de cima da figura você precisa responder com base na característica da letra(vogal ou consoante)', self.central_widget)
+        explanation_part4.setGeometry(0, 0, self.screen_width, 200)
+        explanation_part4.setAlignment(Qt.AlignCenter)
+        explanation_part4.setHidden(True)
+        explanation_part4.setFont(labelF)
+        explanation_part4.setWordWrap(True)
+        explanation_part4.setStyleSheet("color: white;")
+
+        explanation_part5 = QLabel('Quando o conjunto aparecer na parte de baixo da figura você precisa responder com base na característica do número(par ou ímpar)', self.central_widget)
+        explanation_part5.setGeometry(0, 0, self.screen_width, 200)
+        explanation_part5.setAlignment(Qt.AlignCenter)
+        explanation_part5.setHidden(True)
+        explanation_part5.setFont(labelF)
+        explanation_part5.setWordWrap(True)
+        explanation_part5.setStyleSheet("color: white;")
+
+        coment1 = QLabel('Aqui no caso, "3B" está na parte de cima, logo a resposta é baseada no "K" que é uma consoante' , self.central_widget)
+        coment1.setFixedSize(400, self.screen_height)
+        coment1.move(self.geometry().topRight().x() - (coment1.width() + 50), 0) 
+        coment1.setAlignment(Qt.AlignCenter)
+        coment1.setHidden(True)
+        coment1.setFont(labelF)
+        coment1.setWordWrap(True)
+        coment1.setStyleSheet("color: white;")
+
+        coment2 = QLabel('Aqui no caso, "8B" está na parte de baixo, logo a resposta é baseada no "8" que é um número par' , self.central_widget)
+        coment2.setFixedSize(400, self.screen_height)
+        coment2.move(self.geometry().topRight().x() - (coment2.width() + 50), 0)
+        coment2.setHidden(True)
+        coment2.setFont(labelF)
+        coment2.setWordWrap(True)
+        coment2.setStyleSheet("color: white;")
+        
+        self.build_quadrants(600, 600) # Build the quadrants just to show as an example
+
+        example_1 = QLabel("3 B", self.central_widget)
+        example_1.setAlignment(Qt.AlignCenter)
+        example_1.setGeometry(self.quadrant_2.x(), self.quadrant_2.y(), self.quadrant_2.width(), self.quadrant_2.height())
+        example_1.setHidden(True)
+        example_1.setFont(self.trialF)
+
+        example_2 = QLabel("8 B", self.central_widget)
+        example_2.setAlignment(Qt.AlignCenter)
+        example_2.setGeometry(self.quadrant_3.x(), self.quadrant_3.y(), self.quadrant_3.width(), self.quadrant_3.height())
+        example_2.setHidden(True)
+        example_2.setFont(self.trialF)
+
+        next_page_explanation = QLabel('Aperte ESPAÇO para a próxima página', self.central_widget)
+        next_page_explanation.setGeometry(0, 0, self.screen_width, self.screen_height)
         next_page_explanation.setAlignment(Qt.AlignBottom | Qt.AlignHCenter)
+        next_page_explanation.setHidden(True)
         next_page_explanation.setFont(next_pageF)
+        next_page_explanation.setStyleSheet("color: white;")
 
-        finish_explanation = QLabel('Aperte ESPAÇO para retomar a explicação \nAperte Q para iniciar o teste')
+        finish_explanation = QLabel('Aperte ESPAÇO para retomar a explicação \nAperte Q para iniciar o teste', self.central_widget)
+        finish_explanation.setGeometry(0, 0, self.screen_width, self.screen_height)
         finish_explanation.setAlignment(Qt.AlignBottom | Qt.AlignHCenter)
+        finish_explanation.setHidden(True)
         finish_explanation.setFont(next_pageF)
+        finish_explanation.setStyleSheet("color: white;")
 
-        self.start_trials = QLabel('Aperte ESPAÇO para começar')
+        self.start_trials = QLabel('Aperte ESPAÇO para começar', self.central_widget)
+        self.start_trials.setGeometry(0, 0, self.screen_width, self.screen_height)
         self.start_trials.setAlignment(Qt.AlignBottom | Qt.AlignHCenter)
+        self.start_trials.setHidden(True)
         self.start_trials.setFont(next_pageF)
+        self.start_trials.setStyleSheet("color: white;")
 
         self.description = QLabel('B: Par | Vogal\n\n\n\nN: Ímpar | Consoante', self.central_widget)
-        self.description.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        self.description.setFixedSize(200, 200)
+        self.description.setAlignment(Qt.AlignCenter)
+        self.description.setGeometry(self.geometry().topRight().x() - (coment2.width() + 50), 0, 400, self.screen_height)
         self.description.setFont(descriptionF)
         self.description.setHidden(True)
-        self.description.move(800, 300)
+        self.description.setStyleSheet("color: white;")
 
         # Define the widgets that go inside each page
-        self.pages = [[explanation_part1 ,next_page_explanation], [explanation_part2, next_page_explanation], [explanation_part3, finish_explanation]]
+        fourth_page = list()
+        fifth_page = list()
+        for element in self.quadrants:
+            fourth_page.append(element)
+            fifth_page.append(element)
+        fourth_page.append(example_1)
+        fourth_page.append(next_page_explanation)
+        fourth_page.append(explanation_part4)
+        fourth_page.append(coment1)
+        fifth_page.append(example_2)
+        fifth_page.append(finish_explanation)
+        fifth_page.append(explanation_part5)
+        fifth_page.append(coment2)
+
+        self.pages = [[explanation_part1 ,next_page_explanation], [explanation_part2, next_page_explanation], [explanation_part3, next_page_explanation], fourth_page, fifth_page]
 
         # Page index
         self.current_page = 0
 
         # Build the first page just to start the program
         for element in self.pages[self.current_page]:
-            self.layout.addWidget(element)
+            element.setHidden(False)
         
                                         ###### Configuration of NL Test Parameters ######
             
@@ -135,22 +219,53 @@ class TestWindow(QMainWindow):
         self.user_answers = list() # store all the user's answers
         self.nl_test_labels = list() # store all labels with (numer-letter) text. used to quickly turn on/off setHidden method 
         self.remaining_time = list() # store the remaining time of all user's answer, it will be 0 if the user don't answer anything
+        self.current_time = list() # store the current time when the user presses the button
 
                                         ###### Number Letter Task Layout Configuration ######
 
+        # Build the four quadrants
+        self.build_quadrants(600,600)
+
+        # Wrong answer label
+        self.wrong_label = QLabel('Resposta errada')
+        self.wrong_label.setAlignment(Qt.AlignHCenter)
+        self.wrong_label.setStyleSheet("color: red;")
+        self.wrong_label.setFont(labelF)
+        self.wrong_label.setHidden(True)
+        self.layout.addWidget(self.wrong_label)
+
+        # Final screen label
+        self.final_screen = QLabel('Fim', self.central_widget)
+        self.final_screen.setGeometry(0, 0, self.screen_width, self.screen_height)
+        self.final_screen.setAlignment(Qt.AlignCenter)
+        self.final_screen.setFont(QFont("Arial", 28))
+        self.final_screen.setHidden(True)
+        self.final_screen.setStyleSheet("color: white;")
+
+
+
+                                        ###### Methods ######
+    def build_quadrants(self, width:int, height:int):
+        """Build the four quadrants
+
+        Args:
+            
+        """
         # Define the dimensions of figure area
-        display_x_pos = 40
-        display_y_pos = 100
-        display_width = 600
-        display_height = 600
+        display_width = width
+        display_height = height
 
         # Define the dimensions of the 4 quadrants(half the total figure area)
         quad_width = int(display_width/2)
         quad_height = int(display_height/2)
 
+        # Center the figure
+        display_x_pos = self.center_point.x() - quad_width
+        display_y_pos = self.center_point.y() - quad_height
+
  
         # Define color variables
-        color_1 = QColor(200, 200, 200)  # ligt grey
+        color_1 = QColor(191, 191, 191)  # ligt grey
 
         # Palette object
         palette = QPalette()
@@ -182,17 +297,7 @@ class TestWindow(QMainWindow):
         self.quadrant_2.move(display_x_pos + quad_width, display_y_pos)
         self.quadrant_3.move(display_x_pos + quad_width, display_y_pos + quad_height)
         self.quadrant_4.move(display_x_pos, display_y_pos + quad_height)
-
-        # Wrong answer label
-        self.wrong_label = QLabel('Resposta errada')
-        self.wrong_label.setAlignment(Qt.AlignHCenter)
-        self.wrong_label.setFont(labelF)
-        self.wrong_label.setHidden(True)
-        self.layout.addWidget(self.wrong_label)
-
-
-
-                                        ###### Methods ######
+    
     def nl_test_builder(self, data, right_answer):
         """This function receives the signal "data" from the worker thread number_letter_task defined in number_letter_task.py. Two lists are inside the siginal
 
@@ -207,7 +312,7 @@ class TestWindow(QMainWindow):
 
         # It gets the text (numer-letter) sorted in the worker thread and put them all in labels
         for n in range(len(data)):
-            information = f'{data[n]["number"]}{data[n]["letter"]}'
+            information = f'{data[n]["number"]} {data[n]["letter"]}'
             label = QLabel(information, parent=self.central_widget)
             label.setFixedSize(self.quadrant_1.width(), self.quadrant_1.height()) # all the quadrants have the same size, so I picked any
             label.setAlignment(Qt.AlignCenter)
@@ -256,7 +361,6 @@ class TestWindow(QMainWindow):
             time.sleep(0.2)
             #Remove widgets associated with the previous page
             for element in self.pages[self.current_page]:
-                self.layout.removeWidget(element)
                 element.setHidden(True)
             
             #Add 1 to page index and start the couting again when finished
@@ -265,7 +369,6 @@ class TestWindow(QMainWindow):
             #Add widgets associated with the next page
             for element in self.pages[self.current_page]:
                 element.setHidden(False)
-                self.layout.addWidget(element)
 
     def exit_explanation(self):
         """When enable, it receives a signal everytime Q is pressed
@@ -296,9 +399,10 @@ class TestWindow(QMainWindow):
     def first_choice(self):
         """When enable, it receives a signal everytime B is pressed
         """
-        # Store the remaining time in the timer and stop it
+        # Store the computer time and remaining time in the timer then stop the timer
         self.remaining_time.append(self.answer_timer.remainingTime())
         self.answer_timer.stop()
+        self.get_time()
 
         # Set the user answer and check if it's right or wrong
         answer = ["EVEN", "VOWEL"]
@@ -313,9 +417,10 @@ class TestWindow(QMainWindow):
     def second_choice(self):
         """When enable, it receives a signal everytime N is pressed
         """
-        # Store the remaining time in the timer and stop it
+        # Store the computer time and remaining time in the timer then stop the timer
         self.remaining_time.append(self.answer_timer.remainingTime())
         self.answer_timer.stop()
+        self.get_time()
 
         # Set the user answer and check if it's right or wrong
         answer = ["ODD", "CONSONANT"]
@@ -334,18 +439,27 @@ class TestWindow(QMainWindow):
         self.b_shortcut.setEnabled(False)
         self.n_shortcut.setEnabled(False)
         
-        # Delete last label
+        # Delete last label and trial structure
         self.nl_test_labels[self.trial_index].deleteLater()
+        for element in self.quadrants:
+            element.deleteLater()
+        self.description.deleteLater()
+
         
         # Build the data file
         self.create_csv()
-        app.quit()
+
+        # Show the last screen
+        self.final_screen.setHidden(False)
     
     def on_timeout(self):
         """ This function will recieve a signal after answer_timer reach timeout
         """
         # Stop the timer
         self.answer_timer.stop()
+
+        # Store the computer time
+        self.get_time()
 
         # Set the user's answer as wrong
         self.got_wrong = True
@@ -416,20 +530,31 @@ class TestWindow(QMainWindow):
         else:
             self.last_trial()
 
+    def get_time(self): 
+        hour = datetime.datetime.now().hour
+        minute = datetime.datetime.now().minute
+        second = datetime.datetime.now().second
+        microseconds = datetime.datetime.now().microsecond
+        self.current_time.append(f'{hour}:{minute}:{second}.{microseconds}')
+    
     def create_csv(self):
-        with open("output.csv", "w", newline="") as f:
+        hour = datetime.datetime.now().hour
+        minute = datetime.datetime.now().minute
+        second = datetime.datetime.now().second
+        with open(f"{hour}_{minute}_{second}.csv", "w", newline="") as f:
             writer = csv.writer(f)
             
             # First row
-            writer.writerow(['Block', 'Text', 'Quadrant', 'Reaction Time (MS)', 'Right Answer', "User's result"])
+            writer.writerow(['Block', 'Text', 'Quadrant', 'Reaction Time (MS)', 'Answer Time', 'Right Answer', "User's result"])
 
             # Fill each row with data
-            for data_dict, remaining_time, right_answer, result in zip(self.sorted_data, self.remaining_time, self.right_answer, self.user_answers):
+            for data_dict, remaining_time, right_answer, result, current_time in zip(self.sorted_data, self.remaining_time, self.right_answer, self.user_answers, self.current_time):
                 writer.writerow([
                 data_dict["block"],
                 f"{data_dict['number']}{data_dict['letter']}",
                 data_dict["quadrant"],
                 self.how_much_time - remaining_time,
+                current_time,
                 right_answer,
                 result
                 ])
