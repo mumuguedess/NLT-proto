@@ -155,7 +155,7 @@ class TestWindow(QMainWindow):
         finish_explanation.setAlignment(Qt.AlignBottom | Qt.AlignHCenter)
         finish_explanation.setHidden(True)
         finish_explanation.setFont(next_pageF)
-        finish_explanation.setStyleSheet("color: white;")
+        finish_explanation.setStyleSheet("color: red;")
 
         self.start_trials = QLabel('Aperte ESPAÇO para começar', self.central_widget)
         self.start_trials.setGeometry(0, 0, self.screen_width, self.screen_height)
