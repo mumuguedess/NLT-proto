@@ -383,7 +383,7 @@ class TestWindow(QMainWindow):
 
         
         # Label that informs how to start the test
-        self.layout.addWidget(self.start_trials)
+        self.start_trials.setHidden(False)
 
         # Show the number letter task quadrants
         for element in self.quadrants:
