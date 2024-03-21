@@ -111,7 +111,7 @@ class TestWindow(QMainWindow):
         explanation_part5.setWordWrap(True)
         explanation_part5.setStyleSheet("color: white;")
 
-        coment1 = QLabel('Aqui no caso, "3B" está na parte de cima, logo a resposta é baseada no "K" que é uma consoante' , self.central_widget)
+        coment1 = QLabel('Aqui no caso, "3B" está na parte de cima, logo a resposta é baseada no "B" que é uma consoante' , self.central_widget)
         coment1.setFixedSize(400, self.screen_height)
         coment1.move(self.geometry().topRight().x() - (coment1.width() + 50), 0) 
         coment1.setAlignment(Qt.AlignCenter)
@@ -123,6 +123,7 @@ class TestWindow(QMainWindow):
         coment2 = QLabel('Aqui no caso, "8B" está na parte de baixo, logo a resposta é baseada no "8" que é um número par' , self.central_widget)
         coment2.setFixedSize(400, self.screen_height)
         coment2.move(self.geometry().topRight().x() - (coment2.width() + 50), 0)
+        coment2.setAlignment(Qt.AlignCenter)
         coment2.setHidden(True)
         coment2.setFont(labelF)
         coment2.setWordWrap(True)
@@ -165,7 +166,8 @@ class TestWindow(QMainWindow):
 
         self.description = QLabel('B: Par | Vogal\n\n\n\nN: Ímpar | Consoante', self.central_widget)
         self.description.setAlignment(Qt.AlignCenter)
-        self.description.setGeometry(self.geometry().topRight().x() - (coment2.width() + 50), 0, 400, self.screen_height)
+        self.description.setFixedSize(400, self.screen_height)
+        self.description.move(self.geometry().topRight().x() - (self.description.width() + 50), 0)
         self.description.setFont(descriptionF)
         self.description.setHidden(True)
         self.description.setStyleSheet("color: white;")
@@ -566,4 +568,3 @@ if __name__ == "__main__":
     window = TestWindow()
     window.show()
     sys.exit(app.exec_())
-
