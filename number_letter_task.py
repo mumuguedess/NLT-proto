@@ -7,9 +7,9 @@ class number_letter_task(QThread):
     data = pyqtSignal(list, list)
 
     # Number of trials
-    block_A_size = 40
-    block_B_size = 40
-    block_C_size = 40
+    block_A_size = 10
+    block_B_size = 10
+    block_C_size = 10
     random_quadrants = False
 
     def __init__(self):
@@ -38,23 +38,23 @@ class number_letter_task(QThread):
 
         #loop for sorting information in block A
         for n in range(self.block_A_size):
-            number = random.randint(0, 9)
-            letter = random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            number = random.randint(2, 9)
+            letter = random.choice("AEIUBLDH")
             quadrant = 0 if n % 2 == 0 else 1
             trial_builder.append({'number' : number, 'letter': letter, 'quadrant': quadrant, 'block': 'A'})
 
         #loop for sorting information in block B
         for n in range(self.block_B_size):
-            number = random.randint(0, 9)
-            letter = random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            number = random.randint(2, 9)
+            letter = random.choice("AEIUBLDH")
             quadrant = 2 if n % 2 == 0 else 3
             trial_builder.append({'number' : number, 'letter': letter, 'quadrant': quadrant, 'block': 'B'})
         
         #loop for sorting information in block C
         quadrants = [0, 1, 2, 3]
         for n in range(self.block_C_size):
-            number = random.randint(0, 9)
-            letter = random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            number = random.randint(2, 9)
+            letter = random.choice("AEIUBLDH")
             if self.random_quadrants:
                 quadrant = random.randint(0, 3)
             else:
