@@ -71,7 +71,7 @@ class TestWindow(QMainWindow):
         labelF = QFont("Arial", 28)
         next_pageF = QFont("Arial", 16)
         self.trialF = QFont("Arial", 40)
-        descriptionF = QFont("Arial", 14)
+        descriptionF = QFont("Arial", 18)
         descriptionF.setWeight(QFont.Bold)
         
 
@@ -92,9 +92,9 @@ class TestWindow(QMainWindow):
 
         self.build_quadrants(600, 600) # Build the quadrants just to show as an example
         
-        coment1 = QLabel('Se a combinação Letra/Número aparecer nos quadrantes de CIMA, responda sobre a LETRA (no exemplo, letra H).\n Se a combinação Letra/Número aparecer nos quadrantes de BAIXO, responda sobre o NÚMERO (no exemplo, número 3)' , self.central_widget)
-        coment2 = QLabel('Aqui no caso, "5B" está na parte de cima, logo a resposta é baseada no "B" que é uma consoante. O correto seria apertar N' , self.central_widget)
-        coment3 = QLabel('Aqui no caso, "8B" está na parte de baixo, logo a resposta é baseada no "8" que é um número par. O correto seria apertar B' , self.central_widget)
+        coment1 = QLabel('Se a combinação Letra/Número aparecer nos quadrantes de CIMA, responda sobre a LETRA.\n Se a combinação Letra/Número aparecer nos quadrantes de BAIXO, responda sobre o NÚMERO.' , self.central_widget)
+        coment2 = QLabel('Aqui no caso, "5B" está na parte de cima, logo a resposta é baseada no "B" que é uma consoante. O correto seria apertar <b>N</b>' , self.central_widget)
+        coment3 = QLabel('Aqui no caso, "8B" está na parte de baixo, logo a resposta é baseada no "8" que é um número par. O correto seria apertar <b>B</b>' , self.central_widget)
         aux_list = [coment1, coment2, coment3]
         
         for element in aux_list:
@@ -108,22 +108,19 @@ class TestWindow(QMainWindow):
             element.setStyleSheet("color: white;")
         del aux_list
             
-
-        example_1 = QLabel("3 H", self.central_widget)
-        example_2 = QLabel("3 H", self.central_widget)
-        example_3 = QLabel("5 B", self.central_widget)
-        example_4 = QLabel("8 B", self.central_widget)
-        aux_list = [example_1, example_2, example_3, example_4]
+        example_1 = QLabel("5 B", self.central_widget)
+        example_2 = QLabel("8 B", self.central_widget)
+        aux_list = [example_1, example_2]
         
         for element in aux_list:
             element.setAlignment(Qt.AlignCenter)
             element.setHidden(True)
             element.setFont(self.trialF)
         del aux_list
-        example_1.setGeometry(self.quadrant_2.x(), self.quadrant_2.y(), self.quadrant_2.width(), self.quadrant_2.height())
-        example_2.setGeometry(self.quadrant_3.x(), self.quadrant_3.y(), self.quadrant_3.width(), self.quadrant_3.height())
-        example_3.setGeometry(self.quadrant_1.x(), self.quadrant_1.y(), self.quadrant_1.width(), self.quadrant_1.height())
-        example_4.setGeometry(self.quadrant_4.x(), self.quadrant_4.y(), self.quadrant_4.width(), self.quadrant_4.height())
+    
+        
+        example_1.setGeometry(self.quadrant_1.x(), self.quadrant_1.y(), self.quadrant_1.width(), self.quadrant_1.height())
+        example_2.setGeometry(self.quadrant_4.x(), self.quadrant_4.y(), self.quadrant_4.width(), self.quadrant_4.height())
         
 
         next_page_explanation = QLabel('Aperte ESPAÇO para a próxima página', self.central_widget)
@@ -164,9 +161,9 @@ class TestWindow(QMainWindow):
             second_page.append(element)
             third_page.append(element)
             fourth_page.append(element)
-        second_page.extend([example_1, example_2, next_page_explanation, coment1, self.description1, self.description2])
-        third_page.extend([example_3, next_page_explanation, coment2, self.description1, self.description2])
-        fourth_page.extend([example_4, next_page_explanation, coment3, self.description1, self.description2])
+        second_page.extend([next_page_explanation, coment1, self.description1, self.description2])
+        third_page.extend([example_1, next_page_explanation, coment2, self.description1, self.description2])
+        fourth_page.extend([example_2, next_page_explanation, coment3, self.description1, self.description2])
 
         self.pages = [[explanation_part1 ,next_page_explanation], second_page, third_page, fourth_page, [explanation_part2, next_page_explanation], [explanation_part3, finish_explanation]]
 
@@ -333,6 +330,10 @@ class TestWindow(QMainWindow):
             # Show the first trial label
             self.nl_test_labels[self.trial_index].setHidden(False)
 
+            # Remove answer especification from the display
+            self.description1.deleteLater()
+            self.description2.deleteLater()
+            
             # Desable space bar key
             self.spc_shortcut.setEnabled(False)
 
