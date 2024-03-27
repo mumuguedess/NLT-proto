@@ -92,7 +92,7 @@ class TestWindow(QMainWindow):
 
         self.build_quadrants(600, 600) # Build the quadrants just to show as an example
         
-        coment1 = QLabel('Se a combinação Letra/Número aparecer nos quadrantes de CIMA, responda sobre a LETRA.\n Se a combinação Letra/Número aparecer nos quadrantes de BAIXO, responda sobre o NÚMERO.' , self.central_widget)
+        coment1 = QLabel('Se a combinação Letra/Número aparecer nos quadrantes de CIMA, responda sobre a LETRA. Se a combinação Letra/Número aparecer nos quadrantes de BAIXO, responda sobre o NÚMERO.' , self.central_widget)
         coment2 = QLabel('Aqui no caso, "5B" está na parte de cima, logo a resposta é baseada no "B" que é uma consoante. O correto seria apertar <b>N</b>' , self.central_widget)
         coment3 = QLabel('Aqui no caso, "8B" está na parte de baixo, logo a resposta é baseada no "8" que é um número par. O correto seria apertar <b>B</b>' , self.central_widget)
         aux_list = [coment1, coment2, coment3]
