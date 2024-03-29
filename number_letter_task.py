@@ -4,12 +4,13 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 class number_letter_task(QThread):
     # It sends information to build the nl test
-    data = pyqtSignal(list, list)
+    data = pyqtSignal(list, list, list)
 
     # Number of trials
     block_A_size = 10
     block_B_size = 10
     block_C_size = 10
+    block_indicators = [block_A_size, block_B_size + block_A_size]
     random_quadrants = False
 
     def __init__(self):
@@ -87,8 +88,4 @@ class number_letter_task(QThread):
                     right_answers_nl_test.append("ODD")
 
         
-        self.data.emit(trial_builder, right_answers_nl_test)
-
-                      
-                  
-
+        self.data.emit(trial_builder, right_answers_nl_test, self.block_indicators)
