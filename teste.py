@@ -33,6 +33,9 @@ class TestWindow(QMainWindow):
         
         # Variable that makes sure Q were not pressed
         self.q_is_pressed = False
+        
+        # Variable that is True every time the user enter the block's explanation page
+        self.block_page = False
 
         # Signal that start building the csv file with data
         self.finish_task = pyqtSignal()
@@ -72,13 +75,12 @@ class TestWindow(QMainWindow):
         next_pageF = QFont("Arial", 16)
         self.trialF = QFont("Arial", 40)
         descriptionF = QFont("Arial", 18)
-        descriptionF.setWeight(QFont.Bold)
-        
+        descriptionF.setWeight(QFont.Bold)    
 
         # Explanation labels about the experiment
         explanation_part1 = QLabel('Nesse teste, você responderá a números e letras apertando apenas duas teclas (B ou N).\n\nVocê verá um quadrado dividido em quatro partes (quadrantes).\n\nA cada rodada, uma combinação de uma letra e um número (ex. D3) aparecerá em algum quadrante.\n\nSe a combinação aparecer nos quadrantes de cima, atente-se apenas à LETRA.\n\nSe a combinação aparecer nos quadrantes de baixo, atente-se apenas ao NÚMERO', self.central_widget)
         explanation_part2 = QLabel('O teste terá 3 blocos. Só letras, só números, e misto', self.central_widget)
-        explanation_part3 = QLabel('Agora que sabe tudo que precisa para fazer o teste.\n\nTente responder rápido, e tente cometer poucos erros.\n\nPronto?', self.central_widget)
+        explanation_part3 = QLabel('Agora que sabe tudo que precisa para fazer o teste.\n\nTente responder rápido, e tente cometer poucos erros.\n\nPronto? Vamos começar usando só os quadrantes de cima, ou seja, só letras', self.central_widget)
         aux_list = [explanation_part1, explanation_part2, explanation_part3]
         
         for element in aux_list:    
@@ -117,16 +119,15 @@ class TestWindow(QMainWindow):
             element.setHidden(True)
             element.setFont(self.trialF)
         del aux_list
-    
         
         example_1.setGeometry(self.quadrant_1.x(), self.quadrant_1.y(), self.quadrant_1.width(), self.quadrant_1.height())
         example_2.setGeometry(self.quadrant_4.x(), self.quadrant_4.y(), self.quadrant_4.width(), self.quadrant_4.height())
         
-
-        next_page_explanation = QLabel('Aperte ESPAÇO para a próxima página', self.central_widget)
-        finish_explanation = QLabel('Aperte ESPAÇO para rever a explicação \nAperte Q para iniciar o teste', self.central_widget)
-        self.start_trials = QLabel('Aperte ESPAÇO para começar', self.central_widget)
-        aux_list = [next_page_explanation, finish_explanation, self.start_trials]
+        how_to_next_page = QLabel('Aperte ESPAÇO para a próxima página', self.central_widget)
+        how_to_finish_explanation = QLabel('Aperte ESPAÇO para rever a explicação \nAperte Q para iniciar o teste', self.central_widget)
+        self.how_to_start_trials = QLabel('Aperte ESPAÇO para começar', self.central_widget)
+        self.how_to_return = QLabel('Aperte ESPAÇO para continuar o teste \n(Ele vai começar no momento em que você apertar espaço)', self.central_widget)
+        aux_list = [how_to_next_page, how_to_finish_explanation, self.how_to_start_trials, self.how_to_return]
         
         for element in aux_list:
             element.setGeometry(0, 0, self.screen_width, self.screen_height)
@@ -135,7 +136,7 @@ class TestWindow(QMainWindow):
             element.setFont(next_pageF)
             element.setStyleSheet("color: white;")
         del aux_list
-        finish_explanation.setStyleSheet("color: red")
+        how_to_finish_explanation.setStyleSheet("color: red")
 
         self.description1 = QLabel('LETRA:\n B: vogal, N: consoante', self.central_widget)
         self.description2 = QLabel('NÚMERO:\nB: par, N: ímpar', self.central_widget)
@@ -161,11 +162,11 @@ class TestWindow(QMainWindow):
             second_page.append(element)
             third_page.append(element)
             fourth_page.append(element)
-        second_page.extend([next_page_explanation, coment1, self.description1, self.description2])
-        third_page.extend([example_1, next_page_explanation, coment2, self.description1, self.description2])
-        fourth_page.extend([example_2, next_page_explanation, coment3, self.description1, self.description2])
+        second_page.extend([how_to_next_page, coment1, self.description1, self.description2])
+        third_page.extend([example_1, how_to_next_page, coment2, self.description1, self.description2])
+        fourth_page.extend([example_2, how_to_next_page, coment3, self.description1, self.description2])
 
-        self.pages = [[explanation_part1 ,next_page_explanation], second_page, third_page, fourth_page, [explanation_part2, next_page_explanation], [explanation_part3, finish_explanation]]
+        self.pages = [[explanation_part1 ,how_to_next_page], second_page, third_page, fourth_page, [explanation_part2, how_to_next_page], [explanation_part3, how_to_finish_explanation]]
 
         # Page index
         self.current_page = 0
@@ -173,6 +174,20 @@ class TestWindow(QMainWindow):
         # Build the first page just to start the program
         for element in self.pages[self.current_page]:
             element.setHidden(False)
+            
+        block_B = QLabel('Bloco 2:\nSomente com os quadrantes de baixo, ou seja, só números\n\n(Lembrando)\nLETRA:\nB: vogal, N: consoante\n\nNÚMERO:\nB: par, N: ímpar', self.central_widget)
+        block_C = QLabel('Bloco 3:\n Todos os quadrantes estarão funcionando\n\n(Lembrando)\nLETRA:\nB: vogal, N: consoante\n\nNÚMERO:\nB: par, N: ímpar', self.central_widget)
+        self.block_labels = [block_B, block_C]
+        for element in self.block_labels:
+            element.setGeometry(0, 0, self.screen_width, self.screen_height)
+            element.setAlignment(Qt.AlignCenter)
+            element.setFont(labelF)
+            element.setStyleSheet("color: white;")
+            element.setWordWrap(True)
+            element.setHidden(True)
+        
+        # Block index
+        self.block_index = 0
         
                                         ###### Configuration of NL Test Parameters ######
             
@@ -227,9 +242,6 @@ class TestWindow(QMainWindow):
                                         ###### Methods ######
     def build_quadrants(self, width:int, height:int):
         """Build the four quadrants
-
-        Args:
-            
         """
         # Define the dimensions of figure area
         display_width = width
@@ -243,14 +255,12 @@ class TestWindow(QMainWindow):
         display_x_pos = self.center_point.x() - self.quad_width
         display_y_pos = self.center_point.y() - self.quad_height
 
- 
         # Define color variables
         color_1 = QColor(191, 191, 191)  # ligt grey
 
         # Palette object
         palette = QPalette()
         palette.setColor(QPalette.Background, color_1)
-
 
         # create four quadrants
         self.quadrant_1 = QLabel("", self.central_widget)
@@ -278,17 +288,19 @@ class TestWindow(QMainWindow):
         self.quadrant_3.move(display_x_pos + self.quad_width, display_y_pos + self.quad_height)
         self.quadrant_4.move(display_x_pos, display_y_pos + self.quad_height)
     
-    def nl_test_builder(self, data, right_answer):
-        """This function receives the signal "data" from the worker thread number_letter_task defined in number_letter_task.py. Two lists are inside the siginal
+    def nl_test_builder(self, data, right_answer, block_indicators):
+        """This function receives the signal "data" from the worker thread number_letter_task defined in number_letter_task.py. three lists are inside the siginal
 
         Args:
             data (list): trial_builder list from number_letter_task.py. NOTE: trial_builder is a method in this file, the list comes from another file
-            right_answer (list): right_answers_nl_test list from number_letter_task.py.
+            right_answer (list): right_answers_nl_test list from number_letter_task.py
+            block_indicators (list): Each block's index indicators
         """
 
         # Turn the lists from the signal in a variable inside this class
         self.right_answer = right_answer
         self.sorted_data = data
+        self.block_indicators = block_indicators
 
         # It gets the text (numer-letter) sorted in the worker thread and put them all in labels
         for n in range(len(data)):
@@ -316,8 +328,34 @@ class TestWindow(QMainWindow):
         """
         When enable, it receives a signal everytime space bar is pressed
         """
+        #exit the block's information page
+        if self.block_page:
+            
+            # Desable space bar key
+            self.spc_shortcut.setEnabled(False)
+            
+            # Enable "B" and "N" keys
+            self.b_shortcut.setEnabled(True)
+            self.n_shortcut.setEnabled(True)
+            
+            self.block_page = False
+            
+            # Clear the page
+            self.block_labels[self.block_index].setHidden(True)
+            self.how_to_return.setHidden(True)
+            
+            # Add one to block's index
+            self.block_index += 1
+            
+            #show back the quadrants
+            for element in self.quadrants:
+                element.setHidden(False)
+            
+            # Build the next trial
+            self.build_the_next_trial()
+        
         # Last time you will press space so the first trial will begin 
-        if self.q_is_pressed: # so it will only work after you quit explanation screen
+        elif self.q_is_pressed: # so it will only work after you quit explanation screen
             time.sleep(0.2)
 
             # Activate "B" and "N" keys
@@ -325,7 +363,7 @@ class TestWindow(QMainWindow):
             self.n_shortcut.setEnabled(True)
             
             # Deletes unwanted widget
-            self.start_trials.deleteLater()
+            self.how_to_start_trials.deleteLater()
 
             # Show the first trial label
             self.nl_test_labels[self.trial_index].setHidden(False)
@@ -366,9 +404,8 @@ class TestWindow(QMainWindow):
                 else:
                     widget.deleteLater()
 
-        
         # Label that informs how to start the test
-        self.start_trials.setHidden(False)
+        self.how_to_start_trials.setHidden(False)
 
         # Show the number letter task quadrants
         for element in self.quadrants:
@@ -431,10 +468,7 @@ class TestWindow(QMainWindow):
         self.nl_test_labels[self.trial_index].deleteLater()
         for element in self.quadrants:
             element.deleteLater()
-        self.description1.deleteLater()
-        self.description2.deleteLater()
-
-        
+       
         # Build the data file
         self.create_csv()
 
@@ -468,19 +502,13 @@ class TestWindow(QMainWindow):
             self.got_right = False
             self.user_answers.append("Correct")
 
-            # Build the next trial
-            self.nl_test_labels[self.trial_index].deleteLater()
-            if self.trial_index != len(self.nl_test_labels) - 1: # Stop when reach the last trial
-                self.trial_index += 1
-                self.nl_test_labels[self.trial_index].setHidden(False)
-                
-                # Start the timer for the answer once again
-                self.answer_timer.start()
+            # Show block's explanation page
+            if self.trial_index+1 in self.block_indicators:
+                self.build_block_page()
             
-            # After the last trial
+            # Build the next trial
             else:
-                self.last_trial()
-
+                self.build_the_next_trial()
         
         # If the answer is wrong
         elif self.got_wrong:
@@ -505,8 +533,18 @@ class TestWindow(QMainWindow):
         self.n_shortcut.setEnabled(True)
         self.b_shortcut.setEnabled(True)
 
-        # Hide the wrong answer message and build the next tial
+        # Hide the wrong answer message
         self.wrong_label.setHidden(True)
+        
+        # Show block's explanation page
+        if self.trial_index+1 in self.block_indicators:
+            self.build_block_page()
+        
+        # Build the next trial
+        else:
+            self.build_the_next_trial()
+    
+    def build_the_next_trial(self):
         self.nl_test_labels[self.trial_index].deleteLater()
         if self.trial_index != len(self.nl_test_labels) - 1: # Stop when reach the last trial
             self.trial_index += 1
@@ -518,7 +556,26 @@ class TestWindow(QMainWindow):
         # After last trial
         else:
             self.last_trial()
-
+            
+    def build_block_page(self):
+        self.block_page = True
+                
+        # Enable space bar key
+        self.spc_shortcut.setEnabled(True)
+        
+        # Desable "B" and "N" keys
+        self.b_shortcut.setEnabled(False)
+        self.n_shortcut.setEnabled(False)
+        
+        # Clear page
+        for element in self.quadrants:
+            element.setHidden(True)
+        self.nl_test_labels[self.trial_index].setHidden(True)
+        
+        # Show block's description
+        self.block_labels[self.block_index].setHidden(False)
+        self.how_to_return.setHidden(False)
+        
     def get_time(self): 
         hour = datetime.datetime.now().hour
         minute = datetime.datetime.now().minute
@@ -539,14 +596,14 @@ class TestWindow(QMainWindow):
             # Fill each row with data
             for data_dict, remaining_time, right_answer, result, current_time in zip(self.sorted_data, self.remaining_time, self.right_answer, self.user_answers, self.current_time):
                 writer.writerow([
-                data_dict["block"],
-                f"{data_dict['number']}{data_dict['letter']}",
-                data_dict["quadrant"],
-                self.how_much_time - remaining_time,
-                current_time,
-                right_answer,
-                result
-                ])
+                                data_dict["block"],
+                                f"{data_dict['number']}{data_dict['letter']}",
+                                data_dict["quadrant"],
+                                self.how_much_time - remaining_time,
+                                current_time,
+                                right_answer,
+                                result
+                                ])
 
         f.close()
     
