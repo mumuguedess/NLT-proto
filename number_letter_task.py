@@ -7,9 +7,9 @@ class number_letter_task(QThread):
     data = pyqtSignal(list, list, list)
 
     # Number of trials
-    block_A_size = 10
-    block_B_size = 10
-    block_C_size = 10
+    block_A_size = 40
+    block_B_size = 40
+    block_C_size = 40
     block_indicators = [block_A_size, block_B_size + block_A_size]
     random_quadrants = False
 
@@ -22,7 +22,7 @@ class number_letter_task(QThread):
     
     def run(self):
         '''
-        Function that are started when this WorkerThread are started
+        Function that is started when this WorkerThread are started
 
         This function calculate all the right answeres for the number_letter_task
         '''
