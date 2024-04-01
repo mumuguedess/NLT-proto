@@ -34,7 +34,7 @@ class TestWindow(QMainWindow):
         # Variable that makes sure Q were not pressed
         self.q_is_pressed = False
         
-        # Variable that is True every time the user enter the block's explanation page
+        # Variable that is True every time the user enters the block's explanation page
         self.block_page = False
 
         # Signal that start building the csv file with data
@@ -191,7 +191,7 @@ class TestWindow(QMainWindow):
         
                                         ###### Configuration of NL Test Parameters ######
             
-        # Execute the number_letter_task(), which is a thread defined in number_letter_task.py
+        # Run the number_letter_task(), which is a thread defined in number_letter_task.py
         self.nlt_thread = number_letter_task()
         self.nlt_thread.data.connect(self.nl_test_builder)
         self.nlt_thread.start()
@@ -243,7 +243,7 @@ class TestWindow(QMainWindow):
     def build_quadrants(self, width:int, height:int):
         """Build the four quadrants
         """
-        # Define the dimensions of figure area
+        # Define the dimensions of the figure area
         display_width = width
         display_height = height
 
@@ -297,7 +297,7 @@ class TestWindow(QMainWindow):
             block_indicators (list): Each block's index indicators
         """
 
-        # Turn the lists from the signal in a variable inside this class
+        # Turn the lists from the signal into a variable inside this class
         self.right_answer = right_answer
         self.sorted_data = data
         self.block_indicators = block_indicators
@@ -354,7 +354,7 @@ class TestWindow(QMainWindow):
             # Build the next trial
             self.build_the_next_trial()
         
-        # Last time you will press space so the first trial will begin 
+        # Press space so the first trial will begin 
         elif self.q_is_pressed: # so it will only work after you quit explanation screen
             time.sleep(0.2)
 
@@ -429,14 +429,14 @@ class TestWindow(QMainWindow):
         self.answer_timer.stop()
         self.get_time()
 
-        # Set the user answer and check if it's right or wrong
+        # Set the user's answer and check if it's right or wrong
         answer = ["EVEN", "VOWEL"]
         if self.right_answer[self.trial_index] in answer:
             self.got_right = True
         else:
             self.got_wrong = True
         
-        # Method that compute the answer
+        # Method that evaluetes the answer
         self.trial_builder()
     
     def second_choice(self):
@@ -447,14 +447,14 @@ class TestWindow(QMainWindow):
         self.answer_timer.stop()
         self.get_time()
 
-        # Set the user answer and check if it's right or wrong
+        # Set the user's answer and check if it's right or wrong
         answer = ["ODD", "CONSONANT"]
         if self.right_answer[self.trial_index] in answer:
             self.got_right = True
         else:
             self.got_wrong = True
 
-        # Method that compute the answer
+        # Method that evaluetes the answer
         self.trial_builder()
 
     def last_trial(self):
@@ -487,7 +487,7 @@ class TestWindow(QMainWindow):
         # Set the user's answer as wrong
         self.got_wrong = True
 
-        # Compute the user's answer
+        # Evaluete the user's answer
         self.trial_builder()
 
         # Store the remaining time as 0
@@ -524,7 +524,7 @@ class TestWindow(QMainWindow):
             self.b_shortcut.setEnabled(False)
 
     def clear_wrong_label(self):
-        """ This funcion will receive a signal after wrong_timer reach timeout. Clear the wrong answer message and build the next trial when the answer is wrong
+        """ This funcion will receive a signal after wrong_timer reach timeout. It will clear the wrong answer message and build the next trial when the answer is wrong
         """
         # Stop the timer
         self.wrong_timer.stop()
@@ -545,6 +545,8 @@ class TestWindow(QMainWindow):
             self.build_the_next_trial()
     
     def build_the_next_trial(self):
+        """ It erases the label of the previous trial, shows the label of the current trial and starts the answer_timer
+        """
         self.nl_test_labels[self.trial_index].deleteLater()
         if self.trial_index != len(self.nl_test_labels) - 1: # Stop when reach the last trial
             self.trial_index += 1
@@ -558,6 +560,8 @@ class TestWindow(QMainWindow):
             self.last_trial()
             
     def build_block_page(self):
+        """ This function builds the page between blocks
+        """
         self.block_page = True
                 
         # Enable space bar key
@@ -576,7 +580,9 @@ class TestWindow(QMainWindow):
         self.block_labels[self.block_index].setHidden(False)
         self.how_to_return.setHidden(False)
         
-    def get_time(self): 
+    def get_time(self):
+        """ Time structure that go inside the csv file
+        """
         hour = datetime.datetime.now().hour
         minute = datetime.datetime.now().minute
         second = datetime.datetime.now().second
@@ -584,6 +590,8 @@ class TestWindow(QMainWindow):
         self.current_time.append(f'{hour}:{minute}:{second}.{microseconds}')
     
     def create_csv(self):
+        """ It builds the csv file
+        """
         hour = datetime.datetime.now().hour
         minute = datetime.datetime.now().minute
         second = datetime.datetime.now().second
