@@ -5,7 +5,7 @@ import csv
 from number_letter_task import number_letter_task
 from PyQt5.QtGui import QFont, QColor, QPalette, QKeySequence
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLabel, QDesktopWidget, QFrame, QShortcut
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QLabel, QDesktopWidget, QFrame, QShortcut, QLineEdit, QPushButton
 
 class TestWindow(QMainWindow): 
     def __init__(self):
@@ -26,7 +26,7 @@ class TestWindow(QMainWindow):
         self.n_shortcut = QShortcut(QKeySequence("n"), self)
         self.n_shortcut.activated.connect(self.second_choice)
         self.n_shortcut.setEnabled(False)
-        
+
         self.exit_shortcut = QShortcut(QKeySequence("Ctrl+C"), self) #Exit the GUI
         self.exit_shortcut.activated.connect(self.close)
         self.exit_shortcut.setEnabled(True)
@@ -171,9 +171,20 @@ class TestWindow(QMainWindow):
         # Page index
         self.current_page = 0
 
-        # Build the first page just to start the program
-        for element in self.pages[self.current_page]:
-            element.setHidden(False)
+        # Build a box to insert the file name
+        self.text_box = QLineEdit(self)
+        self.text_box.setFixedWidth(self.screen_width)
+        self.text_box.move(0, self.center_point.y()) 
+        self.text_box.setHidden(False)
+        self.text_box.setPlaceholderText("Nome do arquivo(apenas o nome, sem a extenção '.csv')")
+
+        # Button that extract the text from the box
+        self.file_button = QPushButton("Salvar", self)
+        self.file_button.setFixedWidth(self.screen_width)
+        self.file_button.move(0, self.center_point.y() + self.text_box.height()) 
+        self.file_button.setHidden(False)
+        self.file_button.clicked.connect(self.get_text)
+
             
         block_B = QLabel('Bloco 2:\nSomente com os quadrantes de baixo, ou seja, só números\n\n(Lembrando)\nLETRA:\nB: vogal, N: consoante\n\nNÚMERO:\nB: par, N: ímpar', self.central_widget)
         block_C = QLabel('Bloco 3:\n Todos os quadrantes estarão funcionando\n\n(Lembrando)\nLETRA:\nB: vogal, N: consoante\n\nNÚMERO:\nB: par, N: ímpar', self.central_widget)
@@ -240,6 +251,17 @@ class TestWindow(QMainWindow):
 
 
                                         ###### Methods ######
+    def get_text(self):
+        self.file_name = self.text_box.text()
+        
+        # Delete the widgets
+        self.file_button.deleteLater()
+        self.text_box.deleteLater()
+
+        #Build the program's first page, after the file name was set
+        for element in self.pages[self.current_page]:
+            element.setHidden(False)     
+    
     def build_quadrants(self, width:int, height:int):
         """Build the four quadrants
         """
@@ -595,7 +617,7 @@ class TestWindow(QMainWindow):
         hour = datetime.datetime.now().hour
         minute = datetime.datetime.now().minute
         second = datetime.datetime.now().second
-        with open(f"{hour}_{minute}_{second}.csv", "w", newline="") as f:
+        with open(f"{self.file_name}_results_{hour}_{minute}_{second}.csv", "w", newline="") as f:
             writer = csv.writer(f)
             
             # First row
