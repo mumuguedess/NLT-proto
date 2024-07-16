@@ -1,4 +1,5 @@
 import sys
+import datetime
 from PyQt5.QtWidgets import QApplication, QWidget, QFormLayout, QLabel, QLineEdit, QPushButton
 
 class MainWindow(QWidget):
@@ -35,17 +36,22 @@ class MainWindow(QWidget):
         """Use the variables given from the user to build the file names that will be used in the experiment
         """
         self.code = self.code_box.text()
-        self.day = self.day_box.text()
+        self.exp_day = self.day_box.text()
         self.order = self.order_box.text()
-        with open("file_names.txt", 'w') as file:
-            file.write(f'{self.code}_{self.order}_pre_{self.day}_htt\n\n')
-            file.write(f'{self.code}_{self.order}_pre_{self.day}_nlt\n\n')
-            file.write(f'{self.code}_{self.order}_pre_{self.day}_rest\n\n')
-            file.write(f'{self.code}_{self.order}_training_{self.day}_calib\n\n')
-            file.write(f'{self.code}_{self.order}_training_{self.day}_breath\n\n')
-            file.write(f'{self.code}_{self.order}_pos_{self.day}_rest\n\n')
-            file.write(f'{self.code}_{self.order}_pos_{self.day}_htt\n\n')
-            file.write(f'{self.code}_{self.order}_pos_{self.day}_nlt\n\n')
+        self.hour = datetime.datetime.now().hour
+        self.minute = datetime.datetime.now().minute
+        self.second = datetime.datetime.now().second
+        self.day = datetime.datetime.now().day
+        self.month = datetime.datetime.now().month 
+        with open(f"{self.code}_document_names-{self.day}_{self.month}-{self.hour}_{self.minute}_{self.second}.csv.txt", 'w') as file:
+            file.write(f'{self.code}_O{self.order}_pre_{self.exp_day}_htt\n\n')
+            file.write(f'{self.code}_O{self.order}_pre_{self.exp_day}_nlt\n\n')
+            file.write(f'{self.code}_O{self.order}_pre_{self.exp_day}_rest\n\n')
+            file.write(f'{self.code}_O{self.order}_training_{self.exp_day}_calib\n\n')
+            file.write(f'{self.code}_O{self.order}_training_{self.exp_day}_breath\n\n')
+            file.write(f'{self.code}_O{self.order}_pos_{self.exp_day}_rest\n\n')
+            file.write(f'{self.code}_O{self.order}_pos_{self.exp_day}_htt\n\n')
+            file.write(f'{self.code}_O{self.order}_pos_{self.exp_day}_nlt\n\n')
         # Close the window
         self.close()
 
